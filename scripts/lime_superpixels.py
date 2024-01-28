@@ -2,8 +2,8 @@ import torch
 from torchvision.transforms import v2
 
 import matplotlib.pyplot as plt
-from skimage import segmentation, io
-from skimage.segmentation import mark_boundaries
+from skimage import io
+from skimage.segmentation import slic, mark_boundaries
 from lime import lime_image
 from joblib import Parallel, delayed
 
@@ -37,10 +37,10 @@ def create_lime_image(root, cls, filename):
     explainer = lime_image.LimeImageExplainer()
     explanation = explainer.explain_instance(image, batch_predict, 
                                             top_labels=1, hide_color=0, num_samples=1000, 
-                                            segmentation_fn=lambda image: segmentation.slic(image, 
-                                                                                            n_segments=50, compactness=15, 
-                                                                                            max_size_factor=2, min_size_factor=0.5
-                                                                                            )
+                                            segmentation_fn=lambda image: slic(image, 
+                                                                               n_segments=50, compactness=15, 
+                                                                               max_size_factor=2, min_size_factor=0.5
+                                                                               )
                                             )
     
     temp, mask = explanation.get_image_and_mask(explanation.top_labels[0], positive_only=True, num_features=3, hide_rest=False)
